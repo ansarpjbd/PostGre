@@ -1,0 +1,304 @@
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Password for user postgres:
+psql (14.1)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# \l
+                                                   List of databases
+      Name      |  Owner   | Encoding |          Collate           |           Ctype            |   Access privileges   ----------------+----------+----------+----------------------------+----------------------------+----------------------- capg           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ employee       | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ employeesystem | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ postgres       | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ student        | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ template0      | postgres | UTF8     | English_United States.1252 | English_United States.1252 | =c/postgres          +                |          |          |                            |                            | postgres=CTc/postgres
+ template1      | postgres | UTF8     | English_United States.1252 | English_United States.1252 | =c/postgres          +                |          |          |                            |                            | postgres=CTc/postgres
+ test           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+(8 rows)
+
+
+postgres=# create database student;
+ERROR:  database "student" already exists
+postgres=# create database demo;
+CREATE DATABASE
+postgres=# \c demo
+You are now connected to database "demo" as user "postgres".
+demo=# \c employee
+You are now connected to database "employee" as user "postgres".
+employee=# \dt
+           List of relations
+ Schema |   Name    | Type  |  Owner
+--------+-----------+-------+----------
+ public | dept      | table | postgres
+ public | employee  | table | postgres
+ public | employees | table | postgres
+(3 rows)
+
+
+employee=# \dt dept;
+        List of relations
+ Schema | Name | Type  |  Owner
+--------+------+-------+----------
+ public | dept | table | postgres
+(1 row)
+
+
+employee=# \d dept;
+                                    Table "public.dept"
+   Column    |          Type          | Collation | Nullable |           Default
+-------------+------------------------+-----------+----------+------------------------------
+ dept_id     | integer                |           | not null | generated always as identity
+ employee_id | integer                |           |          |
+ dept_name   | character varying(200) |           | not null |
+Indexes:
+    "dept_pkey" PRIMARY KEY, btree (dept_id)
+Foreign-key constraints:
+    "fk_employee" FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
+
+
+employee=# \d employee
+                                   Table "public.employee"
+    Column     |         Type          | Collation | Nullable |           Default
+---------------+-----------------------+-----------+----------+------------------------------
+ employee_id   | integer               |           | not null | generated always as identity
+ employee_name | character varying(50) |           | not null |
+Indexes:
+    "employee_pkey" PRIMARY KEY, btree (employee_id)
+Referenced by:
+    TABLE "dept" CONSTRAINT "fk_employee" FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
+
+
+employee=# \d employees
+                                    Table "public.employees"
+ Column |          Type          | Collation | Nullable |                Default
+--------+------------------------+-----------+----------+---------------------------------------
+ id     | bigint                 |           | not null | nextval('employees_id_seq'::regclass)
+ name   | character varying(200) |           |          |
+ mgr_id | integer                |           |          |
+
+
+employee=# \c demo
+You are now connected to database "demo" as user "postgres".
+demo=# create table employee(id bigint,name varchar(100),salary float8,doj varchar(100));
+CREATE TABLE
+demo=# \dt
+          List of relations
+ Schema |   Name   | Type  |  Owner
+--------+----------+-------+----------
+ public | employee | table | postgres
+(1 row)
+
+
+demo=# \d employee
+                     Table "public.employee"
+ Column |          Type          | Collation | Nullable | Default
+--------+------------------------+-----------+----------+---------
+ id     | bigint                 |           |          |
+ name   | character varying(100) |           |          |
+ salary | double precision       |           |          |
+ doj    | character varying(100) |           |          |
+
+
+demo=# insert into employee values(1001,'ansar',10.00,'12/12/2020');
+INSERT 0 1
+demo=# insert into employee values(1002,'kumar',10.00,'12/12/2020');
+INSERT 0 1
+demo=# insert into employee values(1003,'kumar',10.00,'12/12/2020');
+INSERT 0 1
+demo=# insert into employee values(1004,'mahesh',10.00,'12/12/2020');
+INSERT 0 1
+demo=# insert into employee values(1005,'panjak',10.00,'12/12/2020');
+INSERT 0 1
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1001 | ansar  |     10 | 12/12/2020
+ 1002 | kumar  |     10 | 12/12/2020
+ 1003 | kumar  |     10 | 12/12/2020
+ 1004 | mahesh |     10 | 12/12/2020
+ 1005 | panjak |     10 | 12/12/2020
+(5 rows)
+
+
+demo=# create database demo1;
+CREATE DATABASE
+demo=# \l
+                                                   List of databases
+      Name      |  Owner   | Encoding |          Collate           |           Ctype            |   Access privileges
+----------------+----------+----------+----------------------------+----------------------------+-----------------------
+ capg           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ demo           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ demo1          | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ employee       | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ employeesystem | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ postgres       | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ student        | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ template0      | postgres | UTF8     | English_United States.1252 | English_United States.1252 | =c/postgres          +
+                |          |          |                            |                            | postgres=CTc/postgres
+ template1      | postgres | UTF8     | English_United States.1252 | English_United States.1252 | =c/postgres          +
+                |          |          |                            |                            | postgres=CTc/postgres
+ test           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+(10 rows)
+
+
+demo=# drop database demo1;
+DROP DATABASE
+demo=# \l
+                                                   List of databases
+      Name      |  Owner   | Encoding |          Collate           |           Ctype            |   Access privileges
+----------------+----------+----------+----------------------------+----------------------------+-----------------------
+ capg           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ demo           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ employee       | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ employeesystem | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ postgres       | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ student        | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ template0      | postgres | UTF8     | English_United States.1252 | English_United States.1252 | =c/postgres          +
+                |          |          |                            |                            | postgres=CTc/postgres
+ template1      | postgres | UTF8     | English_United States.1252 | English_United States.1252 | =c/postgres          +
+                |          |          |                            |                            | postgres=CTc/postgres
+ test           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+(9 rows)
+
+
+demo=# \d
+          List of relations
+ Schema |   Name   | Type  |  Owner
+--------+----------+-------+----------
+ public | employee | table | postgres
+(1 row)
+
+
+demo=# insert into emp values(1005,'panjak',10.00,'12/12/2020');
+ERROR:  relation "emp" does not exist
+LINE 1: insert into emp values(1005,'panjak',10.00,'12/12/2020');
+                    ^
+demo=# create table emp(id bigint,name varchar(100),salary float8,doj varchar(100));
+CREATE TABLE
+demo=# \dt
+          List of relations
+ Schema |   Name   | Type  |  Owner
+--------+----------+-------+----------
+ public | emp      | table | postgres
+ public | employee | table | postgres
+(2 rows)
+
+
+demo=# drop table emp;
+DROP TABLE
+demo=# \dt
+          List of relations
+ Schema |   Name   | Type  |  Owner
+--------+----------+-------+----------
+ public | employee | table | postgres
+(1 row)
+
+
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1001 | ansar  |     10 | 12/12/2020
+ 1002 | kumar  |     10 | 12/12/2020
+ 1003 | kumar  |     10 | 12/12/2020
+ 1004 | mahesh |     10 | 12/12/2020
+ 1005 | panjak |     10 | 12/12/2020
+(5 rows)
+
+
+demo=# delete from employee where id=1001;
+DELETE 1
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1002 | kumar  |     10 | 12/12/2020
+ 1003 | kumar  |     10 | 12/12/2020
+ 1004 | mahesh |     10 | 12/12/2020
+ 1005 | panjak |     10 | 12/12/2020
+(4 rows)
+
+
+demo=# update employee set name='ayush' where id=1002
+demo-# update employee set name='ayush' where id=1002;
+ERROR:  syntax error at or near "update"
+LINE 2: update employee set name='ayush' where id=1002;
+        ^
+demo=# update table employee set name='ayush' where id=1002;
+ERROR:  syntax error at or near "table"
+LINE 1: update table employee set name='ayush' where id=1002;
+               ^
+demo=# update employee set name='ayush' where id=1002;
+UPDATE 1
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1003 | kumar  |     10 | 12/12/2020
+ 1004 | mahesh |     10 | 12/12/2020
+ 1005 | panjak |     10 | 12/12/2020
+ 1002 | ayush  |     10 | 12/12/2020
+(4 rows)
+
+
+demo=# update employee set name='ayush' salary=2000 where id=1002;
+ERROR:  syntax error at or near "salary"
+LINE 1: update employee set name='ayush' salary=2000 where id=1002;
+                                         ^
+demo=# update employee set name='ayush', salary=2000 where id=1002;
+UPDATE 1
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1003 | kumar  |     10 | 12/12/2020
+ 1004 | mahesh |     10 | 12/12/2020
+ 1005 | panjak |     10 | 12/12/2020
+ 1002 | ayush  |   2000 | 12/12/2020
+(4 rows)
+
+
+demo=# update employee set name='ayush';
+UPDATE 4
+demo=# select * from employee;
+  id  | name  | salary |    doj
+------+-------+--------+------------
+ 1003 | ayush |     10 | 12/12/2020
+ 1004 | ayush |     10 | 12/12/2020
+ 1005 | ayush |     10 | 12/12/2020
+ 1002 | ayush |   2000 | 12/12/2020
+(4 rows)
+
+Aggreate Method--it work on the group of database
+Sum(column name) 
+        --it works with the int value only
+        --it return the sum of given column 
+Max(column name)
+    > maximum number of given column 		
+Min(column name)
+    > Minmum number of given column 		
+
+Avg(column) 
+        > avg of given column
+
+Count() it i will count all hte rows		
+       
+distinct --it i will return the unique value
+
+Order by --it will sort the data Asc , DESC
+
+IN()  it will give all the matching records
+
+between
+
+>
+
+<
+
+==
+Like _ for one space
+      % for any value 
+
+	   
+	   

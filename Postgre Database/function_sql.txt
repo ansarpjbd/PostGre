@@ -1,0 +1,598 @@
+Server [localhost]:
+Database [postgres]:
+Port [5432]:
+Username [postgres]:
+Password for user postgres:
+psql (14.1)
+WARNING: Console code page (437) differs from Windows code page (1252)
+         8-bit characters might not work correctly. See psql reference
+         page "Notes for Windows users" for details.
+Type "help" for help.
+
+postgres=# \l
+                                                   List of databases
+      Name      |  Owner   | Encoding |          Collate           |           Ctype            |   Access privileges   ----------------+----------+----------+----------------------------+----------------------------+----------------------- capg           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ employee       | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ employeesystem | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ postgres       | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ student        | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ template0      | postgres | UTF8     | English_United States.1252 | English_United States.1252 | =c/postgres          +                |          |          |                            |                            | postgres=CTc/postgres
+ template1      | postgres | UTF8     | English_United States.1252 | English_United States.1252 | =c/postgres          +                |          |          |                            |                            | postgres=CTc/postgres
+ test           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+(8 rows)
+
+
+postgres=# create database student;
+ERROR:  database "student" already exists
+postgres=# create database demo;
+CREATE DATABASE
+postgres=# \c demo
+You are now connected to database "demo" as user "postgres".
+demo=# \c employee
+You are now connected to database "employee" as user "postgres".
+employee=# \dt
+           List of relations
+ Schema |   Name    | Type  |  Owner
+--------+-----------+-------+----------
+ public | dept      | table | postgres
+ public | employee  | table | postgres
+ public | employees | table | postgres
+(3 rows)
+
+
+employee=# \dt dept;
+        List of relations
+ Schema | Name | Type  |  Owner
+--------+------+-------+----------
+ public | dept | table | postgres
+(1 row)
+
+
+employee=# \d dept;
+                                    Table "public.dept"
+   Column    |          Type          | Collation | Nullable |           Default
+-------------+------------------------+-----------+----------+------------------------------
+ dept_id     | integer                |           | not null | generated always as identity
+ employee_id | integer                |           |          |
+ dept_name   | character varying(200) |           | not null |
+Indexes:
+    "dept_pkey" PRIMARY KEY, btree (dept_id)
+Foreign-key constraints:
+    "fk_employee" FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
+
+
+employee=# \d employee
+                                   Table "public.employee"
+    Column     |         Type          | Collation | Nullable |           Default
+---------------+-----------------------+-----------+----------+------------------------------
+ employee_id   | integer               |           | not null | generated always as identity
+ employee_name | character varying(50) |           | not null |
+Indexes:
+    "employee_pkey" PRIMARY KEY, btree (employee_id)
+Referenced by:
+    TABLE "dept" CONSTRAINT "fk_employee" FOREIGN KEY (employee_id) REFERENCES employee(employee_id)
+
+
+employee=# \d employees
+                                    Table "public.employees"
+ Column |          Type          | Collation | Nullable |                Default
+--------+------------------------+-----------+----------+---------------------------------------
+ id     | bigint                 |           | not null | nextval('employees_id_seq'::regclass)
+ name   | character varying(200) |           |          |
+ mgr_id | integer                |           |          |
+
+
+employee=# \c demo
+You are now connected to database "demo" as user "postgres".
+demo=# create table employee(id bigint,name varchar(100),salary float8,doj varchar(100));
+CREATE TABLE
+demo=# \dt
+          List of relations
+ Schema |   Name   | Type  |  Owner
+--------+----------+-------+----------
+ public | employee | table | postgres
+(1 row)
+
+
+demo=# \d employee
+                     Table "public.employee"
+ Column |          Type          | Collation | Nullable | Default
+--------+------------------------+-----------+----------+---------
+ id     | bigint                 |           |          |
+ name   | character varying(100) |           |          |
+ salary | double precision       |           |          |
+ doj    | character varying(100) |           |          |
+
+
+demo=# insert into employee values(1001,'ansar',10.00,'12/12/2020');
+INSERT 0 1
+demo=# insert into employee values(1002,'kumar',10.00,'12/12/2020');
+INSERT 0 1
+demo=# insert into employee values(1003,'kumar',10.00,'12/12/2020');
+INSERT 0 1
+demo=# insert into employee values(1004,'mahesh',10.00,'12/12/2020');
+INSERT 0 1
+demo=# insert into employee values(1005,'panjak',10.00,'12/12/2020');
+INSERT 0 1
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1001 | ansar  |     10 | 12/12/2020
+ 1002 | kumar  |     10 | 12/12/2020
+ 1003 | kumar  |     10 | 12/12/2020
+ 1004 | mahesh |     10 | 12/12/2020
+ 1005 | panjak |     10 | 12/12/2020
+(5 rows)
+
+
+demo=# create database demo1;
+CREATE DATABASE
+demo=# \l
+                                                   List of databases
+      Name      |  Owner   | Encoding |          Collate           |           Ctype            |   Access privileges
+----------------+----------+----------+----------------------------+----------------------------+-----------------------
+ capg           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ demo           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ demo1          | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ employee       | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ employeesystem | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ postgres       | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ student        | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ template0      | postgres | UTF8     | English_United States.1252 | English_United States.1252 | =c/postgres          +
+                |          |          |                            |                            | postgres=CTc/postgres
+ template1      | postgres | UTF8     | English_United States.1252 | English_United States.1252 | =c/postgres          +
+                |          |          |                            |                            | postgres=CTc/postgres
+ test           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+(10 rows)
+
+
+demo=# drop database demo1;
+DROP DATABASE
+demo=# \l
+                                                   List of databases
+      Name      |  Owner   | Encoding |          Collate           |           Ctype            |   Access privileges
+----------------+----------+----------+----------------------------+----------------------------+-----------------------
+ capg           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ demo           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ employee       | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ employeesystem | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ postgres       | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ student        | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+ template0      | postgres | UTF8     | English_United States.1252 | English_United States.1252 | =c/postgres          +
+                |          |          |                            |                            | postgres=CTc/postgres
+ template1      | postgres | UTF8     | English_United States.1252 | English_United States.1252 | =c/postgres          +
+                |          |          |                            |                            | postgres=CTc/postgres
+ test           | postgres | UTF8     | English_United States.1252 | English_United States.1252 |
+(9 rows)
+
+
+demo=# \d
+          List of relations
+ Schema |   Name   | Type  |  Owner
+--------+----------+-------+----------
+ public | employee | table | postgres
+(1 row)
+
+
+demo=# insert into emp values(1005,'panjak',10.00,'12/12/2020');
+ERROR:  relation "emp" does not exist
+LINE 1: insert into emp values(1005,'panjak',10.00,'12/12/2020');
+                    ^
+demo=# create table emp(id bigint,name varchar(100),salary float8,doj varchar(100));
+CREATE TABLE
+demo=# \dt
+          List of relations
+ Schema |   Name   | Type  |  Owner
+--------+----------+-------+----------
+ public | emp      | table | postgres
+ public | employee | table | postgres
+(2 rows)
+
+
+demo=# drop table emp;
+DROP TABLE
+demo=# \dt
+          List of relations
+ Schema |   Name   | Type  |  Owner
+--------+----------+-------+----------
+ public | employee | table | postgres
+(1 row)
+
+
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1001 | ansar  |     10 | 12/12/2020
+ 1002 | kumar  |     10 | 12/12/2020
+ 1003 | kumar  |     10 | 12/12/2020
+ 1004 | mahesh |     10 | 12/12/2020
+ 1005 | panjak |     10 | 12/12/2020
+(5 rows)
+
+
+demo=# delete from employee where id=1001;
+DELETE 1
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1002 | kumar  |     10 | 12/12/2020
+ 1003 | kumar  |     10 | 12/12/2020
+ 1004 | mahesh |     10 | 12/12/2020
+ 1005 | panjak |     10 | 12/12/2020
+(4 rows)
+
+
+demo=# update employee set name='ayush' where id=1002
+demo-# update employee set name='ayush' where id=1002;
+ERROR:  syntax error at or near "update"
+LINE 2: update employee set name='ayush' where id=1002;
+        ^
+demo=# update table employee set name='ayush' where id=1002;
+ERROR:  syntax error at or near "table"
+LINE 1: update table employee set name='ayush' where id=1002;
+               ^
+demo=# update employee set name='ayush' where id=1002;
+UPDATE 1
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1003 | kumar  |     10 | 12/12/2020
+ 1004 | mahesh |     10 | 12/12/2020
+ 1005 | panjak |     10 | 12/12/2020
+ 1002 | ayush  |     10 | 12/12/2020
+(4 rows)
+
+
+demo=# update employee set name='ayush' salary=2000 where id=1002;
+ERROR:  syntax error at or near "salary"
+LINE 1: update employee set name='ayush' salary=2000 where id=1002;
+                                         ^
+demo=# update employee set name='ayush', salary=2000 where id=1002;
+UPDATE 1
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1003 | kumar  |     10 | 12/12/2020
+ 1004 | mahesh |     10 | 12/12/2020
+ 1005 | panjak |     10 | 12/12/2020
+ 1002 | ayush  |   2000 | 12/12/2020
+(4 rows)
+
+
+demo=# update employee set name='ayush';
+UPDATE 4
+demo=# select * from employee;
+  id  | name  | salary |    doj
+------+-------+--------+------------
+ 1003 | ayush |     10 | 12/12/2020
+ 1004 | ayush |     10 | 12/12/2020
+ 1005 | ayush |     10 | 12/12/2020
+ 1002 | ayush |   2000 | 12/12/2020
+(4 rows)
+
+
+demo=# update employee set name='kumar', salary=2000 where id=1002;
+UPDATE 1
+demo=# update employee set name='Mahesh', salary=2000 where id=1003;
+UPDATE 1
+demo=# update employee set name='pankaj', salary=2000 where id=1004;
+UPDATE 1
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1005 | ayush  |     10 | 12/12/2020
+ 1002 | kumar  |   2000 | 12/12/2020
+ 1003 | Mahesh |   2000 | 12/12/2020
+ 1004 | pankaj |   2000 | 12/12/2020
+(4 rows)
+
+
+demo=# select sum(salary) from employee;
+ sum
+------
+ 6010
+(1 row)
+
+
+demo=# select sum(id) from employee;
+ sum
+------
+ 4014
+(1 row)
+
+
+demo=# select sum(name) from employee;
+ERROR:  function sum(character varying) does not exist
+LINE 1: select sum(name) from employee;
+               ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+demo=# select max(salary) from employee;
+ max
+------
+ 2000
+(1 row)
+
+
+demo=# select min(salary) from employee;
+ min
+-----
+  10
+(1 row)
+
+
+demo=# select avg(salary) from employee;
+  avg
+--------
+ 1502.5
+(1 row)
+
+
+demo=# select count(salary) from employee;
+ count
+-------
+     4
+(1 row)
+
+
+demo=# select count(*) from employee;
+ count
+-------
+     4
+(1 row)
+
+
+demo=# select sum(name) from employee;
+ERROR:  function sum(character varying) does not exist
+LINE 1: select sum(name) from employee;
+               ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+demo=# select sum(salary) from employee;
+ sum
+------
+ 6010
+(1 row)
+
+
+demo=# select max(salary) from empployee;
+ERROR:  relation "empployee" does not exist
+LINE 1: select max(salary) from empployee;
+                                ^
+demo=# select max(salary) from employee;
+ max
+------
+ 2000
+(1 row)
+
+
+demo=# select min(salary) from employee;
+ min
+-----
+  10
+(1 row)
+
+
+demo=# select avg(salary) from employee;
+  avg
+--------
+ 1502.5
+(1 row)
+
+
+demo=# select count(*) from employee;
+ count
+-------
+     4
+(1 row)
+
+
+demo=# select count(salary) from employee;
+ count
+-------
+     4
+(1 row)
+
+
+demo=# select distnict(salary) from employee;
+ERROR:  function distnict(double precision) does not exist
+LINE 1: select distnict(salary) from employee;
+               ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+demo=# select distinct(salary) from employee;
+ salary
+--------
+     10
+   2000
+(2 rows)
+
+
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1005 | ayush  |     10 | 12/12/2020
+ 1002 | kumar  |   2000 | 12/12/2020
+ 1003 | Mahesh |   2000 | 12/12/2020
+ 1004 | pankaj |   2000 | 12/12/2020
+(4 rows)
+
+
+demo=# update employee set salay=3000 where id=1003
+demo-# update employee set salay=3000 where id=1003;
+ERROR:  syntax error at or near "update"
+LINE 2: update employee set salay=3000 where id=1003;
+        ^
+demo=# update table employee set salay=3000 where id=1003;
+ERROR:  syntax error at or near "table"
+LINE 1: update table employee set salay=3000 where id=1003;
+               ^
+demo=# update employee set salary=3000 where id=1003;
+UPDATE 1
+demo=# update employee set salary=5000 where id=1004;
+UPDATE 1
+demo=# select * from employee;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1005 | ayush  |     10 | 12/12/2020
+ 1002 | kumar  |   2000 | 12/12/2020
+ 1003 | Mahesh |   3000 | 12/12/2020
+ 1004 | pankaj |   5000 | 12/12/2020
+(4 rows)
+
+
+demo=# select * from employee order by salary;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1005 | ayush  |     10 | 12/12/2020
+ 1002 | kumar  |   2000 | 12/12/2020
+ 1003 | Mahesh |   3000 | 12/12/2020
+ 1004 | pankaj |   5000 | 12/12/2020
+(4 rows)
+
+
+demo=# select * from employee order by salary desc;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1004 | pankaj |   5000 | 12/12/2020
+ 1003 | Mahesh |   3000 | 12/12/2020
+ 1002 | kumar  |   2000 | 12/12/2020
+ 1005 | ayush  |     10 | 12/12/2020
+(4 rows)
+
+
+demo=# select * from employee order by salary name;
+ERROR:  syntax error at or near "name"
+LINE 1: select * from employee order by salary name;
+                                               ^
+demo=# select * from employee order by name;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1005 | ayush  |     10 | 12/12/2020
+ 1002 | kumar  |   2000 | 12/12/2020
+ 1003 | Mahesh |   3000 | 12/12/2020
+ 1004 | pankaj |   5000 | 12/12/2020
+(4 rows)
+
+
+demo=# select * from employee order by name desc;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1004 | pankaj |   5000 | 12/12/2020
+ 1003 | Mahesh |   3000 | 12/12/2020
+ 1002 | kumar  |   2000 | 12/12/2020
+ 1005 | ayush  |     10 | 12/12/2020
+(4 rows)
+
+
+demo=# select * from employee where salary in(10,3000,5000);
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1005 | ayush  |     10 | 12/12/2020
+ 1003 | Mahesh |   3000 | 12/12/2020
+ 1004 | pankaj |   5000 | 12/12/2020
+(3 rows)
+
+
+demo=# select * from employee where between 3000 and 5000;
+ERROR:  syntax error at or near "3000"
+LINE 1: select * from employee where between 3000 and 5000;
+                                             ^
+demo=# select * from employee where between 3000 , 5000;
+ERROR:  syntax error at or near "3000"
+LINE 1: select * from employee where between 3000 , 5000;
+                                             ^
+demo=# select * from employee where between 3000 to 5000;
+ERROR:  syntax error at or near "3000"
+LINE 1: select * from employee where between 3000 to 5000;
+                                             ^
+demo=# select * from employee where salary between 3000  5000;
+ERROR:  syntax error at or near "5000"
+LINE 1: select * from employee where salary between 3000  5000;
+                                                          ^
+demo=# select * from employee where salary between 3000 and  5000;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1003 | Mahesh |   3000 | 12/12/2020
+ 1004 | pankaj |   5000 | 12/12/2020
+(2 rows)
+
+
+demo=# select * from employee where salary between 3001 and  5000;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1004 | pankaj |   5000 | 12/12/2020
+(1 row)
+
+
+demo=# select * from employee where salary >=5000
+demo-# select * from employee where salary >=5000;
+ERROR:  syntax error at or near "select"
+LINE 2: select * from employee where salary >=5000;
+        ^
+demo=# select * from employee where salary =>5000;
+ERROR:  syntax error at or near "=>"
+LINE 1: select * from employee where salary =>5000;
+                                            ^
+demo=# select * from employee where salary >5000;
+ id | name | salary | doj
+----+------+--------+-----
+(0 rows)
+
+
+demo=# select * from employee where salary <3000;
+  id  | name  | salary |    doj
+------+-------+--------+------------
+ 1005 | ayush |     10 | 12/12/2020
+ 1002 | kumar |   2000 | 12/12/2020
+(2 rows)
+
+
+demo=# select * from employee where salary =3000;
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1003 | Mahesh |   3000 | 12/12/2020
+(1 row)
+
+
+demo=# select * from employee where like 'a%'
+demo-# select * from employee where like 'a%';
+ERROR:  syntax error at or near "select"
+LINE 2: select * from employee where like 'a%';
+        ^
+demo=# select * from employee where name like 'a%';
+  id  | name  | salary |    doj
+------+-------+--------+------------
+ 1005 | ayush |     10 | 12/12/2020
+(1 row)
+
+
+demo=# select * from employee where name like '%a%';
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1005 | ayush  |     10 | 12/12/2020
+ 1002 | kumar  |   2000 | 12/12/2020
+ 1003 | Mahesh |   3000 | 12/12/2020
+ 1004 | pankaj |   5000 | 12/12/2020
+(4 rows)
+
+
+demo=# select * from employee where name like '_a%';
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1003 | Mahesh |   3000 | 12/12/2020
+ 1004 | pankaj |   5000 | 12/12/2020
+(2 rows)
+
+
+demo=# select * from employee where name like '%a';
+ id | name | salary | doj
+----+------+--------+-----
+(0 rows)
+
+
+demo=# select * from employee where name like '%j';
+  id  |  name  | salary |    doj
+------+--------+--------+------------
+ 1004 | pankaj |   5000 | 12/12/2020
+(1 row)
+
+
+demo=# select * from employee where name like '%j';
