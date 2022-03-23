@@ -1,0 +1,205 @@
+
+
+demo=# drop table employee;
+DROP TABLE
+demo=# select * from employee;
+ERROR:  relation "employee" does not exist
+LINE 1: select * from employee;
+                      ^
+demo=# create table employee(id bigserial primary key, name varhcar(100) , deptid int);
+ERROR:  type "varhcar" does not exist
+LINE 1: ...ate table employee(id bigserial primary key, name varhcar(10...
+                                                             ^
+demo=# create table employee(id bigserial primary key, name varchar(100) , deptid int);
+CREATE TABLE
+demo=# \d employee;
+                                    Table "public.employee"
+ Column |          Type          | Collation | Nullable |               Default           
+--------+------------------------+-----------+----------+--------------------------------------
+ id     | bigint                 |           | not null | nextval('employee_id_seq'::regclass)
+ name   | character varying(100) |           |          |
+ deptid | integer                |           |          |
+Indexes:
+    "employee_pkey" PRIMARY KEY, btree (id)
+
+
+demo=# alter table employee add foreign key(deptid) references dept(id);
+ALTER TABLE
+demo=# insert into employee values('ansar',1);
+ERROR:  invalid input syntax for type bigint: "ansar"
+LINE 1: insert into employee values('ansar',1);
+                                    ^
+demo=# insert into employee values('','ansar',1);
+ERROR:  invalid input syntax for type bigint: ""
+LINE 1: insert into employee values('','ansar',1);
+                                    ^
+demo=# insert into employee (name,deptid) values('ansar',1);
+INSERT 0 1
+demo=# select * from dept;
+ id | name |  city
+----+------+---------
+  1 | IT   | Chennai
+  2 | HR   | BLR
+(2 rows)
+
+
+demo=# insert into employee (name,deptid) values('priya',2);
+INSERT 0 1
+demo=# insert into employee (name,deptid) values('priya',5);
+ERROR:  insert or update on table "employee" violates foreign key constraint "employee_deptid_fkey"
+DETAIL:  Key (deptid)=(5) is not present in table "dept".
+demo=# select * from employee;
+ id | name  | deptid
+----+-------+--------
+  1 | ansar |      1
+  2 | priya |      2
+(2 rows)
+
+
+demo=# select * from dept;
+ id | name |  city
+----+------+---------
+  1 | IT   | Chennai
+  2 | HR   | BLR
+(2 rows)
+
+
+demo=# insert into employee (name,deptid) values('kumar',1);
+INSERT 0 1
+demo=# insert into employee (name,deptid) values('mahesh',1);
+INSERT 0 1
+demo=# select * from dept where name='IT';
+ id | name |  city
+----+------+---------
+  1 | IT   | Chennai
+(1 row)
+
+
+demo=# select * from employee where dept=1;
+ERROR:  column "dept" does not exist
+LINE 1: select * from employee where dept=1;
+                                     ^
+HINT:  Perhaps you meant to reference the column "employee.deptid".
+demo=# select * from employee where deptid=1;
+ id |  name  | deptid
+----+--------+--------
+  1 | ansar  |      1
+  4 | kumar  |      1
+  5 | mahesh |      1
+(3 rows)
+
+
+demo=# select * from employee where deptid=(select id from dept where name='IT');
+ id |  name  | deptid
+----+--------+--------
+  1 | ansar  |      1
+  4 | kumar  |      1
+  5 | mahesh |      1
+(3 rows)
+
+
+demo=# select * from employee , dept;
+ id |  name  | deptid | id | name |  city
+----+--------+--------+----+------+---------
+  1 | ansar  |      1 |  1 | IT   | Chennai
+  1 | ansar  |      1 |  2 | HR   | BLR
+  2 | priya  |      2 |  1 | IT   | Chennai
+  2 | priya  |      2 |  2 | HR   | BLR
+  4 | kumar  |      1 |  1 | IT   | Chennai
+  4 | kumar  |      1 |  2 | HR   | BLR
+  5 | mahesh |      1 |  1 | IT   | Chennai
+  5 | mahesh |      1 |  2 | HR   | BLR
+(8 rows)
+
+
+demo=# select * from employee inner join dept;
+ERROR:  syntax error at or near ";"
+LINE 1: select * from employee inner join dept;
+                                              ^
+demo=# select * from employee inner join dept on employee.deptid=dept.id;
+ id |  name  | deptid | id | name |  city
+----+--------+--------+----+------+---------
+  1 | ansar  |      1 |  1 | IT   | Chennai
+  2 | priya  |      2 |  2 | HR   | BLR
+  4 | kumar  |      1 |  1 | IT   | Chennai
+  5 | mahesh |      1 |  1 | IT   | Chennai
+(4 rows)
+
+
+demo=# insert into employee (name) values('No dept');
+INSERT 0 1
+demo=# select * from employee left join dept on employee.deptid=dept.id;
+ id |  name   | deptid | id | name |  city
+----+---------+--------+----+------+---------
+  1 | ansar   |      1 |  1 | IT   | Chennai
+  2 | priya   |      2 |  2 | HR   | BLR
+  4 | kumar   |      1 |  1 | IT   | Chennai
+  5 | mahesh  |      1 |  1 | IT   | Chennai
+  6 | No dept |        |    |      |
+(5 rows)
+
+
+demo=# select * from employee inner join dept on employee.deptid=dept.id;
+ id |  name  | deptid | id | name |  city
+----+--------+--------+----+------+---------
+  1 | ansar  |      1 |  1 | IT   | Chennai
+  2 | priya  |      2 |  2 | HR   | BLR
+  4 | kumar  |      1 |  1 | IT   | Chennai
+  5 | mahesh |      1 |  1 | IT   | Chennai
+(4 rows)
+
+
+demo=# select * from employee left join dept on employee.deptid=dept.id;
+ id |  name   | deptid | id | name |  city
+----+---------+--------+----+------+---------
+  1 | ansar   |      1 |  1 | IT   | Chennai
+  2 | priya   |      2 |  2 | HR   | BLR
+  4 | kumar   |      1 |  1 | IT   | Chennai
+  5 | mahesh  |      1 |  1 | IT   | Chennai
+  6 | No dept |        |    |      |
+(5 rows)
+
+
+demo=# insert into dept(name,city) value('Marketing','Blr');
+ERROR:  syntax error at or near "value"
+LINE 1: insert into dept(name,city) value('Marketing','Blr');
+                                    ^
+demo=# insert into dept(name,city) values('Marketing','Blr');
+INSERT 0 1
+demo=# select * from employee left join dept on employee.deptid=dept.id;
+ id |  name   | deptid | id | name |  city
+----+---------+--------+----+------+---------
+  1 | ansar   |      1 |  1 | IT   | Chennai
+  2 | priya   |      2 |  2 | HR   | BLR
+  4 | kumar   |      1 |  1 | IT   | Chennai
+  5 | mahesh  |      1 |  1 | IT   | Chennai
+  6 | No dept |        |    |      |
+(5 rows)
+
+
+demo=# select * from employee right join dept on employee.deptid=dept.id;
+ id |  name  | deptid | id |   name    |  city
+----+--------+--------+----+-----------+---------
+  1 | ansar  |      1 |  1 | IT        | Chennai
+  2 | priya  |      2 |  2 | HR        | BLR
+  4 | kumar  |      1 |  1 | IT        | Chennai
+  5 | mahesh |      1 |  1 | IT        | Chennai
+    |        |        |  3 | Marketing | Blr
+(5 rows)
+
+
+demo=# select * from employee full join dept on employee.deptid=dept.id;
+ id |  name   | deptid | id |   name    |  city
+----+---------+--------+----+-----------+---------
+  1 | ansar   |      1 |  1 | IT        | Chennai
+  2 | priya   |      2 |  2 | HR        | BLR
+  4 | kumar   |      1 |  1 | IT        | Chennai
+  5 | mahesh  |      1 |  1 | IT        | Chennai
+  6 | No dept |        |    |           |
+    |         |        |  3 | Marketing | Blr
+(6 rows)
+
+
+demo=#
+
+
